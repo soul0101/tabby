@@ -1,0 +1,60 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next
+/.next/
+/out/
+/build
+next-env.d.ts
+
+# testing
+/coverage
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+
+# env
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# os / editors
+.DS_Store
+*.pem
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.idea
+.vscode
+
+# build artifacts
+*.tsbuildinfo
+/.playwright-mcp/
+
+# Working notes kept on disk, not in the repo.
+/WEBMCP_HACKATHON_BRIEF.md
+/details-form.md
+/devpost-form.md
+/form-body.md
+
+# Local workspace: film production and generated media. These live on disk for
+# whoever is making the demo; the repo is the app.
+/demo/
+/docs/
+/narration/
+/scripts/
+/public/samples/
+/.mcp.json
+*.png
+*.jpg
+*.mov
+*.mp4
+*.webm
+*.mp3
+*.wav
+/public/*.svg

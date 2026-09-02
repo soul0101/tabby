@@ -1,0 +1,5 @@
+# Test output — never needed by a build.
+test-results
+playwright-report
+*.mov
+*.mp4

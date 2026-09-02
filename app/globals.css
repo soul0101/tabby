@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/* ── Tabby ─────────────────────────────────────────────────────────────
+   Quiet chrome, meaningful colour, joy from people.
+   Light theme only.                                                     */
+
+@theme {
+  --color-canvas:   #FAF8F5;
+  --color-surface:  #FFFFFF;
+  --color-sunken:   #F3F0EB;
+  --color-ink:      #1A1814;
+  --color-ink-2:    #6B6560;
+  --color-ink-3:    #9A938C;
+  --color-line:     #EAE5DE;
+  --color-line-2:   #DAD3C9;
+
+  /* Reserved exclusively for money direction. */
+  --color-positive:      #0F7A5A;
+  --color-positive-wash: #E6F3EE;
+  --color-negative:      #C4453A;
+  --color-negative-wash: #FBEBE9;
+  /* The agent's own colour — never used for money, so it can't be confused
+     with a balance. */
+  --color-agent:         #4C568C;
+  --color-agent-wash:    #ECEEF7;
+
+  --color-warn:          #9A6511;
+  --color-warn-wash:     #FBF1DE;
+
+  --emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, var(--emoji), sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, var(--emoji), sans-serif;
+
+  --radius-card: 16px;
+  --radius-field: 11px;
+
+  --shadow-card: 0 1px 2px rgba(26,24,20,.04), 0 4px 16px -6px rgba(26,24,20,.08);
+  --shadow-pop: 0 2px 6px rgba(26,24,20,.06), 0 16px 40px -12px rgba(26,24,20,.18);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    touch-action: manipulation;
+  }
+  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::selection { background: #EFE7D9; }
+
+  input, textarea, select, button { font: inherit; color: inherit; }
+}
+
+@layer utilities {
+  /* Money never misaligns and never wraps mid-figure. */
+  .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+  .emoji {
+    font-family: var(--emoji);
+    font-variant-emoji: emoji;
+    line-height: 1;
+  }
+
+  .label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Something the agent just changed. */
+  .agent-touched {
+    animation: agent-touch 2.4s ease-out;
+    border-radius: 13px;
+  }
+
+  /* A restrained rise on hover — depth, not bounce. */
+  .lift {
+    transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+  }
+  .lift:hover {
+    box-shadow: var(--shadow-pop);
+    transform: translateY(-1px);
+    border-color: var(--color-line-2);
+  }
+}
+
+@keyframes fade {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes lift {
+  from { opacity: 0; transform: scale(.97) }
+  to { opacity: 1; transform: none }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes banner-in {
+  from { opacity: 0; transform: translateY(-8px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes spark {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .55; transform: scale(.86); }
+}
+
+@keyframes delta-in {
+  from { opacity: 0; transform: translateY(-3px) scale(.9); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* The agent's touch: a ring that blooms and fades. */
+@keyframes agent-touch {
+  0%   { box-shadow: 0 0 0 0 rgba(76,86,140,.35), inset 0 0 0 1px rgba(76,86,140,.25); }
+  35%  { box-shadow: 0 0 0 4px rgba(76,86,140,.16), inset 0 0 0 1px rgba(76,86,140,.35); }
+  100% { box-shadow: 0 0 0 0 rgba(76,86,140,0), inset 0 0 0 1px rgba(76,86,140,0); }
+}
+
+@keyframes agent-sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(300%); }
+}
+
+/* Lines cascading in as a receipt becomes a split. */
+@keyframes line-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes call-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

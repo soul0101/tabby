@@ -1,0 +1,34 @@
+#!/bin/sh
+# Refuse to record a secret — in the diff or in the message.
+#
+# This exists because a commit message written through $(...) once had its
+# backticks command-substituted by the shell, dumping the whole environment
+# (including live tokens) into the commit body, which was then pushed public.
+# Rotating the tokens fixed the exposure; this stops the next one.
+
+fail() { echo "pre-commit: $1" >&2; echo "If this is a false positive: git commit --no-verify" >&2; exit 1; }
+
+PATTERNS='hf_[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{50,}|sk-[A-Za-z0-9]{32,}|sk-ant-[A-Za-z0-9-]{40,}|sb_secret_[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+
+# 1. Staged content.
+if git diff --cached -U0 | grep -qE "$PATTERNS"; then
+  fail "staged changes contain something shaped like a credential."
+fi
+
+# 2. An environment dump in the message — the exact failure that happened.
+MSG="$1"
+[ -n "$MSG" ] && [ -f "$MSG" ] || exit 0
+if grep -qE "$PATTERNS" "$MSG"; then
+  fail "the commit message contains something shaped like a credential."
+fi
+if grep -qE '^[A-Z_][A-Z0-9_]{3,}=' "$MSG"; then
+  fail "the commit message looks like a dumped shell environment.
+A backtick or \$(...) in the message was probably expanded by the shell.
+Write messages with:  git commit -F <file>   — never inside \$( )."
+fi
+
+# 3. Files that should never be tracked, whatever .gitignore says.
+if git diff --cached --name-only | grep -qE '(^|/)\.env($|\.)'; then
+  fail "an .env file is staged."
+fi
+exit 0
